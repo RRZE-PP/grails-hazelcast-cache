@@ -1,21 +1,13 @@
-package org.grails.plugin.hazelcast.cachemanager
+package org.grails.plugins.hazelcast.cache
 
-import java.util.List;
-
-import org.springframework.beans.factory.InitializingBean;
-import org.springframework.cache.CacheManager;
 import org.springframework.context.ApplicationContext;
 
 import com.hazelcast.config.Config;
-import com.hazelcast.config.MapConfig;
-import com.hazelcast.core.Hazelcast;
-import com.hazelcast.core.HazelcastInstance;
-
-import grails.plugin.cache.ConfigBuilder;
+import com.hazelcast.config.MapConfig
+import com.hazelcast.core.HazelcastInstance
 import grails.plugin.cache.ConfigLoader
 import grails.plugin.cache.GrailsCacheManager;
-import grails.util.Holders;
-import groovy.util.ConfigObject;
+import grails.util.Holders
 
 class HazelcastConfigLoader extends ConfigLoader {
 	

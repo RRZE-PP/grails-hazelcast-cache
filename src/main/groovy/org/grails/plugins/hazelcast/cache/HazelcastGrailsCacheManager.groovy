@@ -1,4 +1,4 @@
-package org.grails.plugin.hazelcast.cachemanager
+package org.grails.plugins.hazelcast.cache
 
 import com.hazelcast.core.DistributedObject
 import com.hazelcast.core.HazelcastInstance

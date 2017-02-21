@@ -1,7 +1,4 @@
-package org.grails.plugin.hazelcast.cachemanager
-
-import java.util.List;
-import java.util.Map
+package org.grails.plugins.hazelcast.cache
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,10 +6,7 @@ import org.slf4j.LoggerFactory;
 import com.hazelcast.config.MapConfig
 import com.hazelcast.config.NearCacheConfig
 import com.hazelcast.config.MaxSizeConfig;
-import com.hazelcast.config.MaxSizeConfig.MaxSizePolicy;
-
-import grails.plugin.cache.ConfigBuilder;
-import groovy.util.BuilderSupport;
+import com.hazelcast.config.MaxSizeConfig.MaxSizePolicy
 
 class HazelcastConfigBuilder extends BuilderSupport {
 

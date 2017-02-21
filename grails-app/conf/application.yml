@@ -2,7 +2,7 @@
 grails:
     profile: web-plugin
     codegen:
-        defaultPackage: hazelcast.cachemanager
+        defaultPackage: hazelcast.cache
     spring:
         transactionManagement:
             proxies: false

@@ -1,4 +1,4 @@
-package org.grails.plugin.hazelcast.cachemanager
+package org.grails.plugins.hazelcast.cache
 
 import grails.boot.*
 import grails.boot.config.GrailsAutoConfiguration

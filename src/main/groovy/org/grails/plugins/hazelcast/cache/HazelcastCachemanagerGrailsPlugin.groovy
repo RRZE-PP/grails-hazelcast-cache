@@ -1,4 +1,4 @@
-package org.grails.plugin.hazelcast.cachemanager
+package org.grails.plugins.hazelcast.cache
 
 import grails.plugin.cache.web.filter.PageFragmentCachingFilter
 import grails.plugins.*
@@ -22,7 +22,7 @@ Brief summary/description of the plugin.
     def profiles = ['web']
     def loadAfter = ['cache']
     // URL to the plugin's documentation
-    def documentation = "http://grails.org/plugin/hazelcast-cachemanager"
+    def documentation = "http://grails.org/plugin/hazelcast-cache"
 
     // Extra (optional) plugin metadata
 
