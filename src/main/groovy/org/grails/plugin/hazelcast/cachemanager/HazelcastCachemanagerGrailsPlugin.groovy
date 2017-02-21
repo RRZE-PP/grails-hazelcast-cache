@@ -6,7 +6,7 @@ import grails.plugins.*
 class HazelcastCachemanagerGrailsPlugin extends Plugin {
 
     // the version or versions of Grails the plugin is designed for
-    def grailsVersion = "3.2 > *"
+    def grailsVersion = "3.2.0 > *"
     // resources that are excluded from plugin packaging
     def pluginExcludes = [
         "grails-app/views/error.gsp"
@@ -20,7 +20,7 @@ class HazelcastCachemanagerGrailsPlugin extends Plugin {
 Brief summary/description of the plugin.
 '''
     def profiles = ['web']
-
+    def loadAfter = ['cache']
     // URL to the plugin's documentation
     def documentation = "http://grails.org/plugin/hazelcast-cachemanager"
 

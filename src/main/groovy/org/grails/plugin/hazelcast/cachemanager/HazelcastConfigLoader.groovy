@@ -57,8 +57,11 @@ class HazelcastConfigLoader extends ConfigLoader {
 //			cacheManager.getCache(name)
 //		}
 
-		HazelcastInstance hazelcastInstance = Holders.applicationContext.getBean('hazelcast')
-		loadConfig(hazelcastInstance.getConfig())
+		def bean = Holders.config.grails.hazelcast.cache.hazelcastBean
+		if (bean) {
+			HazelcastInstance hazelcastInstance = Holders.applicationContext.getBean(bean)
+			loadConfig(hazelcastInstance.getConfig())
+		}
 
 	}
 	
