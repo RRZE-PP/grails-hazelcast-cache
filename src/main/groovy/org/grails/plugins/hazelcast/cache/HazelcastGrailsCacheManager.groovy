@@ -1,22 +1,16 @@
 package org.grails.plugins.hazelcast.cache
 
-import com.hazelcast.core.DistributedObject
-import com.hazelcast.core.HazelcastInstance
 import com.hazelcast.core.IMap
+import com.hazelcast.spring.cache.HazelcastCacheManager
 import grails.plugin.cache.GrailsCacheManager
+import groovy.util.logging.Slf4j
 import org.springframework.cache.Cache
-
-import java.util.concurrent.ConcurrentHashMap
-import java.util.concurrent.ConcurrentMap
 
 /**
  * Created by ma33fyza on 21.02.17.
  */
-class HazelcastGrailsCacheManager implements GrailsCacheManager{
-
-    private final ConcurrentMap<String, Cache> caches = new ConcurrentHashMap<String, Cache>()
-    HazelcastInstance hazelcastInstance
-
+@Slf4j
+class HazelcastGrailsCacheManager extends HazelcastCacheManager implements GrailsCacheManager{
 
     @Override
     boolean cacheExists(String name) {
@@ -25,33 +19,26 @@ class HazelcastGrailsCacheManager implements GrailsCacheManager{
 
     @Override
     boolean destroyCache(String name) {
+        if(log.traceEnabled)
+            log.trace "Destroying cache with name $name not supported!"
         return false
     }
 
     @Override
     Cache getCache(String name) {
-        Cache cache = caches.get(name);
+        Cache cache = caches.get(name)
         if (cache == null) {
-            final IMap<Object, Object> map = hazelcastInstance.getMap(name);
-            cache = new GrailsHazelcastCache(map);
-            final Cache currentCache = caches.putIfAbsent(name, cache);
+            IMap map = hazelcastInstance.getMap(name)
+            cache = createGrailsHazelcastCache(map)
+            Cache currentCache = caches.putIfAbsent(name, cache)
             if (currentCache != null) {
-                cache = currentCache;
+                cache = currentCache
             }
         }
         return cache;
     }
 
-    @Override
-    Collection<String> getCacheNames() {
-        Set<String> cacheNames = new HashSet<String>()
-        final Collection<DistributedObject> distributedObjects = hazelcastInstance.getDistributedObjects()
-        for (DistributedObject distributedObject : distributedObjects) {
-            if (distributedObject instanceof IMap) {
-                final IMap<?, ?> map = (IMap) distributedObject
-                cacheNames.add(map.getName())
-            }
-        }
-        return cacheNames
+    GrailsHazelcastCache createGrailsHazelcastCache(IMap map){
+        new GrailsHazelcastCache(map)
     }
 }

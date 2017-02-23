@@ -1,29 +1,29 @@
 package org.grails.plugins.hazelcast.cache
 
-import org.springframework.context.ApplicationContext;
-
-import com.hazelcast.config.Config;
+import com.hazelcast.core.DistributedObject
+import com.hazelcast.core.IMap
+import org.springframework.context.ApplicationContext
 import com.hazelcast.config.MapConfig
 import com.hazelcast.core.HazelcastInstance
 import grails.plugin.cache.ConfigLoader
-import grails.plugin.cache.GrailsCacheManager;
 import grails.util.Holders
 
-class HazelcastConfigLoader extends ConfigLoader {
-	
+class HzCacheConfigLoader extends ConfigLoader {
 
-	GrailsCacheManager cacheManager
-	
+	HazelcastInstance hazelcastInstance
+
 	@Override
 	public void reload(List<ConfigObject> configs, ApplicationContext ctx) {
 		
 		
 		/*
-		 * NOT SUPPORTING RELOAD
+		 * RELOAD NOT SUPPORTED
 		 */
 		
 //		log.warn "RELOADING OF DISTRIBUTED HAZELCAST CHACHES NOT SUPPORTED!"
-		
+
+//		def cacheManager = ctx.grailsCacheManager
+//
 //		for (String name in cacheManager.cacheNames) {
 //			cacheManager.destroyCache name
 //		}
@@ -35,7 +35,7 @@ class HazelcastConfigLoader extends ConfigLoader {
 //		instance.getLifecycleService().terminate()
 //		instance = Hazelcast.getOrCreateHazelcastInstance(config)
 //		for (ConfigObject co : configs) {
-//			HazelcastConfigBuilder builder = new HazelcastConfigBuilder()
+//			HzCacheConfigBuilder builder = new HzCacheConfigBuilder()
 //			if (co.config instanceof Closure) {
 //				builder.parse co.config
 //			}
@@ -48,20 +48,13 @@ class HazelcastConfigLoader extends ConfigLoader {
 //		for (String name : cacheNames){
 //			cacheManager.getCache(name)
 //		}
-
-		def bean = Holders.config.grails.hazelcast.cache.hazelcastBean
-		if (bean) {
-			HazelcastInstance hazelcastInstance = Holders.applicationContext.getBean(bean)
-			loadConfig(hazelcastInstance.getConfig())
-		}
-
 	}
 	
 	
-	def loadConfig(Config config){
-		def configs = loadOrderedConfigs(Holders.grailsApplication)
-		for (ConfigObject co : configs) {
-			HazelcastConfigBuilder builder = new HazelcastConfigBuilder()
+	def loadConfig(){
+		def config = hazelcastInstance.getConfig()
+		for (ConfigObject co : loadOrderedConfigs(Holders.grailsApplication)) {
+			HzCacheConfigBuilder builder = new HzCacheConfigBuilder()
 			if (co.config instanceof Closure) {
 				builder.parse co.config
 			}

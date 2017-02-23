@@ -17,6 +17,8 @@ apply plugin:"org.grails.grails-plugin"
 apply plugin:"org.grails.grails-plugin-publish"
 apply plugin:"org.grails.grails-gsp"
 
+def hazelcastVersion = "3.7.4"
+
 repositories {
     mavenLocal()
     maven { url "https://repo.grails.org/grails/core" }
@@ -48,8 +50,8 @@ dependencies {
 
 
 
-    provided 'com.hazelcast:hazelcast:3.7.4'
-    provided("com.hazelcast:hazelcast-spring:3.7.4")
+    compile "com.hazelcast:hazelcast:$hazelcastVersion"
+    compile("com.hazelcast:hazelcast-spring:$hazelcastVersion")
 }
 
 bootRun {

@@ -1,5 +1,7 @@
 package org.grails.plugins.hazelcast.cache
 
+import com.hazelcast.config.MapStoreConfig
+import com.hazelcast.config.PartitioningStrategyConfig
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -8,15 +10,19 @@ import com.hazelcast.config.NearCacheConfig
 import com.hazelcast.config.MaxSizeConfig;
 import com.hazelcast.config.MaxSizeConfig.MaxSizePolicy
 
-class HazelcastConfigBuilder extends BuilderSupport {
+class HzCacheConfigBuilder extends BuilderSupport {
 
-	private static final Logger log = LoggerFactory.getLogger(HazelcastConfigBuilder)
+	private static final Logger log = LoggerFactory.getLogger(HzCacheConfigBuilder)
 	
 	
 	protected static final List CACHE_PROPERTIES = ['name', 'maxIdleSeconds', 'timeToLiveSeconds', 'minEvictionCheckMillis', 'asyncBackupCount',
-		'backupCount', 'maxSizeConfig', 'mergePolicy', 'statisticsEnabled', 'readBackupData', 'optimizeQueries','evictionPolicy']
+		'backupCount', 'maxSizeConfig', 'mergePolicy', 'statisticsEnabled', 'readBackupData', 'optimizeQueries','evictionPolicy', 'quorumName', 'cacheDeserializedValues']
 	protected static final List NEAR_CACHE_PROPERTIES = ['name', 'maxIdleSeconds', 'timeToLiveSeconds', 'maxSize', 'evictionPolicy', 'evictionConfig', 'inMemoryFormat',
 		'localUpdatePolicy', 'cacheLocalEntries', 'invalidateOnChange']
+	protected static final List MAP_STORE_PROPERTIES = ['className', 'factoryClassName', 'writeDelaySeconds', 'writeBatchSize', 'enabled', 'initialLoadMode', 'writeCoalescing',
+														 'implementation', 'factoryImplementation']
+//	protected static final List HOT_RESTART_PROPERTIES = ['fsync', 'enabled']
+	protected static final List PARTITIONING_STRATEGY_PROPERTIES = ['partitionStrategyClass', 'partitionStrategy']
 
 	protected int unrecognizedElementDepth = 0
 	protected MapConfig current
@@ -56,7 +62,18 @@ class HazelcastConfigBuilder extends BuilderSupport {
 				current.nearCacheConfig = new NearCacheConfig()
 				stack.push(name)
 				return
-				
+			case 'mapStoreConfig':
+				current.mapStoreConfig = new MapStoreConfig()
+				stack.push(name)
+				return
+//			case 'hotRestartConfig':
+//				current.hotRestartConfig = new HotRestartConfig()
+//				stack.push(name)
+//				return
+			case 'partitioningStrategyConfig':
+				current.partitioningStrategyConfig = new PartitioningStrategyConfig()
+				stack.push(name)
+				return
 		}
 		
 		
@@ -99,6 +116,23 @@ class HazelcastConfigBuilder extends BuilderSupport {
 					return name
 				}
 				break;
+			case 'mapStoreConfig':
+				if (MAP_STORE_PROPERTIES.contains(name)){
+					current.mapStoreConfig."$name" = value
+					return name
+				}
+				break;
+//			case 'hotRestartConfig':
+//				if (HOT_RESTART_PROPERTIES.contains(name)){
+//					current.hotRestartConfig."$name" = value
+//					return name
+//				}
+//				break;
+			case 'partitioningStrategyConfig':
+				if (PARTITIONING_STRATEGY_PROPERTIES.contains(name)){
+					current.partitioningStrategyConfig."$name" = value
+					return name
+				}
 		}
 		unrecognizedElementDepth++
 		log.warn "Cannot create node with name '$name' and value '$value' for parent '$level'"
