@@ -1,7 +1,9 @@
 package org.grails.plugins.hazelcast.cache
 
 import grails.plugins.*
+import groovy.util.logging.Slf4j
 
+@Slf4j
 class HazelcastCacheGrailsPlugin extends Plugin {
 
     // the version or versions of Grails the plugin is designed for
@@ -56,9 +58,10 @@ Hazelcast implementation of the Grails Cache plugin
 //            }
 //        }
 
-        def cacheConfig = grailsApplication.config.grails.cache.config
+        def cacheConfig = grailsApplication.config.grails.cache
 
         if (cacheConfig.hazelcastBean) {
+            println "define grails-cache bean"
 
 //            xmlns cache: 'http://www.springframework.org/schema/cache'
 //

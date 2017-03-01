@@ -6,11 +6,16 @@ import grails.plugin.cache.GrailsCacheManager
 import groovy.util.logging.Slf4j
 import org.springframework.cache.Cache
 
+import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.ConcurrentMap
+
 /**
  * Created by ma33fyza on 21.02.17.
  */
 @Slf4j
 class HazelcastGrailsCacheManager extends HazelcastCacheManager implements GrailsCacheManager{
+
+    private final ConcurrentMap<String, Cache> caches = new ConcurrentHashMap<String, Cache>()
 
     @Override
     boolean cacheExists(String name) {
