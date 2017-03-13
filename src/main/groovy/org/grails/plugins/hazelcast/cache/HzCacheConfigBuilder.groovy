@@ -89,7 +89,7 @@ class HzCacheConfigBuilder extends BuilderSupport {
 			return
 		}
 		
-		log.info "createNode $name, value: $value"
+		log.debug "createNode $name, value: $value"
 		String level = stack[-1]
 		stack.push name
 
@@ -169,7 +169,7 @@ class HzCacheConfigBuilder extends BuilderSupport {
 
 	@Override
 	protected void nodeCompleted(parent, node) {
-		log.trace "nodeCompleted $parent $node"
+		log.trace "nodeCompleted $node"
 
 		if (unrecognizedElementDepth) {
 			unrecognizedElementDepth--

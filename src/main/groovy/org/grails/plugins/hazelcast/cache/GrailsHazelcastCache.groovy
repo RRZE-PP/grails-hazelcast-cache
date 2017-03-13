@@ -3,14 +3,16 @@ package org.grails.plugins.hazelcast.cache
 import com.hazelcast.core.IMap
 import com.hazelcast.spring.cache.HazelcastCache
 import grails.plugin.cache.GrailsCache
+import groovy.transform.CompileStatic
 import groovy.transform.InheritConstructors
 import groovy.util.logging.Slf4j
 
 @Slf4j
 @InheritConstructors
+@CompileStatic
 class GrailsHazelcastCache extends HazelcastCache implements GrailsCache {
 
-	Set<Class> excludes = [MetaClass]
+	Set<Class> excludes = [MetaClass] as Set<Class>
 
 	@Override
 	Collection<Object> getAllKeys() {
@@ -19,7 +21,13 @@ class GrailsHazelcastCache extends HazelcastCache implements GrailsCache {
 
 	
 	IMap getCache(){
-		getNativeCache()
+		(IMap) getNativeCache()
+	}
+
+	@Override
+	void evict(Object key) {
+		super.evict(key)
+		if (log.isTraceEnabled()) log.trace "evict key: ${key?.toString()}"
 	}
 
 	@Override

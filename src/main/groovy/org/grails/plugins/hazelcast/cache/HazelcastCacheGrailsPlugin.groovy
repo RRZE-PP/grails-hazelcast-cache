@@ -61,7 +61,7 @@ Hazelcast implementation of the Grails Cache plugin
         def cacheConfig = grailsApplication.config.grails.cache
 
         if (cacheConfig.hazelcastBean) {
-            println "define grails-cache bean"
+            log.trace "configure grails-cache beans"
 
 //            xmlns cache: 'http://www.springframework.org/schema/cache'
 //
@@ -83,6 +83,7 @@ Hazelcast implementation of the Grails Cache plugin
 //                keyGenerator = ref('webCacheKeyGenerator')
 //                expressionEvaluator = ref('webExpressionEvaluator')
 //            }
+            log.info "Hazelcast-Cache config loaded"
         }
     }
     }
