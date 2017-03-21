@@ -16,7 +16,8 @@ class HzCacheConfigBuilder extends BuilderSupport {
 	
 	
 	protected static final List CACHE_PROPERTIES = ['name', 'maxIdleSeconds', 'timeToLiveSeconds', 'minEvictionCheckMillis', 'asyncBackupCount',
-		'backupCount', 'maxSizeConfig', 'mergePolicy', 'statisticsEnabled', 'readBackupData', 'optimizeQueries','evictionPolicy', 'quorumName', 'cacheDeserializedValues']
+		'backupCount', 'mergePolicy', 'statisticsEnabled', 'readBackupData', 'optimizeQueries','evictionPolicy', 'quorumName', 'cacheDeserializedValues']
+	protected static final List MAX_SIZE_PROPERTIES = ['size', 'maxSizePolicy']
 	protected static final List NEAR_CACHE_PROPERTIES = ['name', 'maxIdleSeconds', 'timeToLiveSeconds', 'maxSize', 'evictionPolicy', 'evictionConfig', 'inMemoryFormat',
 		'localUpdatePolicy', 'cacheLocalEntries', 'invalidateOnChange']
 	protected static final List MAP_STORE_PROPERTIES = ['className', 'factoryClassName', 'writeDelaySeconds', 'writeBatchSize', 'enabled', 'initialLoadMode', 'writeCoalescing',
@@ -56,6 +57,10 @@ class HzCacheConfigBuilder extends BuilderSupport {
 			case 'domain':
 				current = new MapConfig()//[:]
 				caches << current
+				stack.push(name)
+				return
+			case 'maxSizeConfig':
+				current.maxSizeConfig = new MaxSizeConfig()
 				stack.push(name)
 				return
 			case 'nearCacheConfig':
@@ -110,6 +115,12 @@ class HzCacheConfigBuilder extends BuilderSupport {
 					return name
 				}
 				break
+			case 'maxSizeConfig':
+				if (MAX_SIZE_PROPERTIES.contains(name)){
+					current.maxSizeConfig."$name" = value
+					return name
+				}
+				break;
 			case 'nearCacheConfig':
 				if (NEAR_CACHE_PROPERTIES.contains(name)){
 					current.nearCacheConfig."$name" = value
