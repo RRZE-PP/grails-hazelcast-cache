@@ -18,6 +18,7 @@ class HzConfigBuilder extends BuilderSupport{
     protected static final List NETWORK_PROPERTIES = ['interfaces', 'publicAddress', 'port', 'portCount', 'portAutoIncrement', 'reuseAddress', 'outboundPortDefs',
                                                         'outboundPorts']
     protected static final List MULTICAST_PROPERTIES = ['enabled', 'multicastGroup', 'multicastPort', 'multicastTimeoutSeconds', 'trustedInterfaces', 'multicastTimeToLive', 'loopbackModeEnabled']
+    protected static final List INTERFACE_PROPERTIES = ['enabled', 'interfaces']
 
     protected int unrecognizedElementDepth = 0
     protected Config current
@@ -79,6 +80,10 @@ class HzConfigBuilder extends BuilderSupport{
                 current.networkConfig.join.multicastConfig = new MulticastConfig()
                 stack.push(name)
                 return
+            case 'interfaceConfig':
+                current.networkConfig.interfaces = new InterfacesConfig()
+                stack.push(name)
+                return
             case 'properties':
                 stack.push(name)
                 return
@@ -132,6 +137,12 @@ class HzConfigBuilder extends BuilderSupport{
             case 'joinConfig':
                 break;
             case 'multicastConfig':
+                if (MULTICAST_PROPERTIES.contains(name)){
+                    current.networkConfig.join."$name" = value
+                    return name
+                }
+                break;
+            case 'interfaceConfig':
                 if (MULTICAST_PROPERTIES.contains(name)){
                     current.networkConfig.join."$name" = value
                     return name

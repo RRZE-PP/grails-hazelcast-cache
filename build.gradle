@@ -8,7 +8,7 @@ buildscript {
     }
 }
 
-version "0.0.1"
+version "${hazelcastVersion}.${pluginVersion}"
 group "org.grails.plugins"
 
 apply plugin:"eclipse"
@@ -16,8 +16,6 @@ apply plugin:"idea"
 apply plugin:"org.grails.grails-plugin"
 apply plugin:"org.grails.grails-plugin-publish"
 apply plugin:"org.grails.grails-gsp"
-
-def hazelcastVersion = "3.7.4"
 
 repositories {
     mavenLocal()
