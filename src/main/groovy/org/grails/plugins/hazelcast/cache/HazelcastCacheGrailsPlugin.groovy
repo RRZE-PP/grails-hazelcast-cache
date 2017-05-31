@@ -1,5 +1,7 @@
 package org.grails.plugins.hazelcast.cache
 
+import com.hazelcast.core.Hazelcast
+import com.hazelcast.core.HazelcastInstance
 import grails.plugins.*
 import groovy.util.logging.Slf4j
 
@@ -59,23 +61,26 @@ Hazelcast implementation of the Grails Cache plugin
 //        }
 
         def cacheConfig = grailsApplication.config.grails.cache
-
-        if (cacheConfig.hazelcastBean) {
-            log.trace "configure grails-cache beans"
+        log.info "$cacheConfig"
+        if (cacheConfig.hazelcastInstance) {
+            log.info "load hazelcast instance"
 
 //            xmlns cache: 'http://www.springframework.org/schema/cache'
 //
 //            cache.'annotation-driven'('cache-manager': 'grailsCacheManager' , 'key-generator': 'customCacheKeyGenerator',
 //                    mode: 'proxy', 'proxy-target-class': true, 'error-handler':'hazelcastCacheErrorHandler')
 
-            grailsCacheManager(HazelcastGrailsCacheManager) {
-                hazelcastInstance = ref(cacheConfig.hazelcastBean)
-            }
+            HazelcastInstance instance = Hazelcast.getHazelcastInstanceByName((String) cacheConfig.hazelcastInstance)
+            log.info "load hazelcast instance"
+            if (instance) {
+                grailsCacheManager(HazelcastGrailsCacheManager) {
+                    hazelcastInstance = instance
+                }
 
-            grailsCacheConfigLoader(HzCacheConfigLoader) { bean ->
-                bean.initMethod = 'loadConfig'
-                hazelcastInstance = ref(cacheConfig.hazelcastBean)
-            }
+                grailsCacheConfigLoader(HzCacheConfigLoader) { bean ->
+                    bean.initMethod = 'loadConfig'
+                    hazelcastInstance = instance
+                }
 
 //            grailsCacheFilter(PageFragmentCachingFilter) {
 //                cacheManager = ref('grailsCacheManager')
@@ -83,7 +88,10 @@ Hazelcast implementation of the Grails Cache plugin
 //                keyGenerator = ref('webCacheKeyGenerator')
 //                expressionEvaluator = ref('webExpressionEvaluator')
 //            }
-            log.info "Hazelcast-Cache config loaded"
+                log.info "Hazelcast-Cache config loaded"
+            } else {
+                log.warn "Hazelcast instance with name ${cacheConfig.hazelcastInstance} not found!"
+            }
         }
     }
     }
