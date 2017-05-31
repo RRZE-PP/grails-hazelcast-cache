@@ -61,7 +61,6 @@ Hazelcast implementation of the Grails Cache plugin
 //        }
 
         def cacheConfig = grailsApplication.config.grails.cache
-        log.info "$cacheConfig"
         if (cacheConfig.hazelcastInstance) {
             log.info "load hazelcast instance"
 
