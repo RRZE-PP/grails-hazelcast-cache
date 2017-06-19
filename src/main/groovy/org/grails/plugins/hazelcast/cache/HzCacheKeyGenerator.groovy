@@ -29,7 +29,7 @@ class HzCacheKeyGenerator implements KeyGenerator {
         def hasHashCodeOverridden = hashCodeMap.get(objClass)
         if (hasHashCodeOverridden ==null){
             def hashCodeMethod = ClassUtils.getMethod(Object, 'hashCode')
-            if(ClassUtils.getMostSpecificMethod(hashCodeMethod, objClass.declaringClass == Object)) {
+            if(ClassUtils.getMostSpecificMethod(hashCodeMethod, objClass) == Object) {
                 log.warn "${objClass} or its super classes does not override the hashCode() method! " +
                            "Please make sure the class has a proper hashCode() implementation " +
                            "otherwise caching may not work properly!"
