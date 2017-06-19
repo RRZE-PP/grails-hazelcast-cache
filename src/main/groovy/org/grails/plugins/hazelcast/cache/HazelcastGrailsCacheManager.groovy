@@ -24,13 +24,14 @@ class HazelcastGrailsCacheManager extends HazelcastCacheManager implements Grail
 
     @Override
     boolean destroyCache(String name) {
-        if(log.traceEnabled)
-            log.trace "Destroying cache with name $name not supported!"
-        return false
+//        if(log.traceEnabled)
+//            log.trace "Destroying cache with name $name not supported!"
+        getCache(name).getCache().destroy()
+        return true
     }
 
     @Override
-    Cache getCache(String name) {
+    GrailsHazelcastCache getCache(String name) {
         Cache cache = caches.get(name)
         if (cache == null) {
             IMap map = hazelcastInstance.getMap(name)
