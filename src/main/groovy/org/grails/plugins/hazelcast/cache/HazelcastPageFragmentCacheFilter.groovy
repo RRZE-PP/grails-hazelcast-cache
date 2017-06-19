@@ -1,7 +1,9 @@
 package org.grails.plugins.hazelcast.cache
 
+import grails.plugin.cache.web.ContentCacheParameters
 import grails.plugin.cache.web.PageInfo
 import grails.plugin.cache.web.filter.PageFragmentCachingFilter
+import org.grails.web.util.WebUtils
 import org.springframework.cache.Cache
 
 /**
@@ -25,4 +27,8 @@ class HazelcastPageFragmentCacheFilter extends PageFragmentCachingFilter {
         log.debug "Put element into cache [${cache.getName()}] with ttl [${timeToLive}]"
     }
 
+    @Override
+    protected void initContext() {
+        contextHolder.get().push(new ContentCacheParameters(WebUtils.retrieveGrailsWebRequest()))
+    }
 }
