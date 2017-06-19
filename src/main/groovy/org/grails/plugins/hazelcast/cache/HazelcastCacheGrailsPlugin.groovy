@@ -103,7 +103,7 @@ Hazelcast implementation of the Grails Cache plugin
                         expressionEvaluator = ref('webExpressionEvaluator')
                     }
                     urlPatterns = "*"
-                    dispatcherTypes = EnumSet.of(DispatcherType.FORWARD, DispatcherType.INCLUDE)
+                    dispatcherTypes = EnumSet.of(DispatcherType.FORWARD, DispatcherType.INCLUDE, DispatcherType.REQUEST)
                 }
                 log.info "Hazelcast-Cache config loaded"
             } else {
