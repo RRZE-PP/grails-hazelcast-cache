@@ -7,6 +7,8 @@ import com.hazelcast.jmx.ManagementService
 import grails.plugins.*
 import groovy.util.logging.Slf4j
 
+import javax.servlet.DispatcherType
+
 @Slf4j
 class HazelcastCacheGrailsPlugin extends Plugin {
 
@@ -93,11 +95,15 @@ Hazelcast implementation of the Grails Cache plugin
                         bean.constructorArgs = [instance.getOriginal()]
                     }
                 }
-                grailsCacheFilter(HazelcastPageFragmentCacheFilter) {
-                    cacheManager = ref('grailsCacheManager')
-                    cacheOperationSource = ref('cacheOperationSource')
-                    keyGenerator = ref('webCacheKeyGenerator')
-                    expressionEvaluator = ref('webExpressionEvaluator')
+                grailsCacheFilter(org.springframework.boot.web.servlet.FilterRegistrationBean) {
+                    filter = bean(HazelcastPageFragmentCacheFilter) {
+                        cacheManager = ref('grailsCacheManager')
+                        cacheOperationSource = ref('cacheOperationSource')
+                        keyGenerator = ref('webCacheKeyGenerator')
+                        expressionEvaluator = ref('webExpressionEvaluator')
+                    }
+                    urlPatterns = "*"
+                    dispatcherTypes = EnumSet.of(DispatcherType.FORWARD, DispatcherType.INCLUDE)
                 }
                 log.info "Hazelcast-Cache config loaded"
             } else {
