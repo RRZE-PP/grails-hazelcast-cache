@@ -2,6 +2,7 @@ package org.grails.plugins.hazelcast.cache
 
 import com.hazelcast.core.Hazelcast
 import com.hazelcast.core.HazelcastInstance
+import com.hazelcast.jmx.ManagementService
 import grails.plugins.*
 import groovy.util.logging.Slf4j
 
@@ -72,6 +73,11 @@ Hazelcast implementation of the Grails Cache plugin
             HazelcastInstance instance = Hazelcast.getHazelcastInstanceByName((String) cacheConfig.hazelcastInstance)
             log.info "load hazelcast instance"
             if (instance) {
+
+                cacheBeanPostProcessor(CacheBeanPostProcessor)
+
+                hzCacheKeyGenerator(HzCacheKeyGenerator)
+
                 grailsCacheManager(HazelcastGrailsCacheManager) {
                     hazelcastInstance = instance
                 }
@@ -81,12 +87,16 @@ Hazelcast implementation of the Grails Cache plugin
                     hazelcastInstance = instance
                 }
 
-//            grailsCacheFilter(PageFragmentCachingFilter) {
-//                cacheManager = ref('grailsCacheManager')
-//                cacheOperationSource = ref('cacheOperationSource')
-//                keyGenerator = ref('webCacheKeyGenerator')
-//                expressionEvaluator = ref('webExpressionEvaluator')
-//            }
+                hazelcastManagementService(ManagementService){ bean->
+                    bean.destroyMethod = 'destroy'
+                    bean.constructorArgs = [instance]
+                }
+                grailsCacheFilter(HazelcastPageFragmentCacheFilter) {
+                    cacheManager = ref('grailsCacheManager')
+                    cacheOperationSource = ref('cacheOperationSource')
+                    keyGenerator = ref('webCacheKeyGenerator')
+                    expressionEvaluator = ref('webExpressionEvaluator')
+                }
                 log.info "Hazelcast-Cache config loaded"
             } else {
                 log.warn "Hazelcast instance with name ${cacheConfig.hazelcastInstance} not found!"

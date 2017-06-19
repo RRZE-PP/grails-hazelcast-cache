@@ -1,0 +1,3 @@
+grails:
+  cache:
+    cacheKeyGen: hzCacheKeyGenerator
