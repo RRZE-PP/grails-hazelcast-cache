@@ -2,8 +2,6 @@ package org.grails.plugins.hazelcast.cache
 
 import com.hazelcast.core.Hazelcast
 import com.hazelcast.core.HazelcastInstance
-import com.hazelcast.instance.HazelcastInstanceProxy
-import com.hazelcast.jmx.ManagementService
 import grails.plugins.*
 import groovy.util.logging.Slf4j
 
@@ -86,12 +84,6 @@ Hazelcast implementation of the Grails Cache plugin
                 grailsCacheConfigLoader(HzCacheConfigLoader) { bean ->
                     bean.initMethod = 'loadConfig'
                     hazelcastInstance = instance
-                }
-                if (instance instanceof HazelcastInstanceProxy) {
-                    hazelcastManagementService(ManagementService) { bean ->
-                        bean.destroyMethod = 'destroy'
-                        bean.constructorArgs = [instance.getOriginal()]
-                    }
                 }
                 grailsCacheFilter(HazelcastPageFragmentCacheFilter) {
                     cacheManager = ref('grailsCacheManager')
