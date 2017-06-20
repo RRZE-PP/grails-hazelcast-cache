@@ -67,7 +67,7 @@ public class HzCacheKey implements Serializable{
         sb.append("#");
         sb.append(HzCacheKey.class.getSimpleName());
         sb.append("@");
-        sb.append(hashCode());
+        sb.append(Integer.toHexString(hashCode()));
         return sb.toString();
     }
 }
