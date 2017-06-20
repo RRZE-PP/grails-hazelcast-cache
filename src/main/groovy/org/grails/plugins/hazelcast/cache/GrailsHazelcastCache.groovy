@@ -33,23 +33,6 @@ class GrailsHazelcastCache extends HazelcastCache implements GrailsCache {
 	}
 
 	@Override
-	<T> T get(Object key, Callable<T> valueLoader) {
-		T value = (T) get(key)?.get()
-		if (value) {
-			return value
-		}
-		if (valueLoader){
-			try {
-				value = valueLoader.call()
-				put(key, toStoreValue(value))
-			} catch (e){
-				log.warn "cannot load key from valueLoader! cause: ${e.message}"
-			}
-		}
-		return value
-	}
-
-	@Override
 	void put(Object key, Object value) {
 		if (!excludes.any {it.isInstance(value)}) {
 			if (log.isTraceEnabled()) log.trace "put key: ${key?.toString()} and value ${value?.toString()}"
