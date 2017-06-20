@@ -1,10 +1,12 @@
 package org.grails.plugins.hazelcast.cache
 
-import grails.plugin.cache.web.ContentCacheParameters
+import grails.core.GrailsControllerClass
 import grails.plugin.cache.web.PageInfo
 import grails.plugin.cache.web.filter.PageFragmentCachingFilter
-import org.grails.web.util.WebUtils
+import grails.util.Holders
+import org.grails.web.servlet.mvc.GrailsWebRequest
 import org.springframework.cache.Cache
+import org.springframework.web.context.request.RequestContextHolder
 
 /**
  * Created by ma33fyza on 14.06.17.
@@ -29,6 +31,19 @@ class HazelcastPageFragmentCacheFilter extends PageFragmentCachingFilter {
 
     @Override
     protected void initContext() {
-        contextHolder.get().push(new ContentCacheParameters(WebUtils.retrieveGrailsWebRequest()))
+        GrailsWebRequest requestAttributes = (GrailsWebRequest) RequestContextHolder.getRequestAttributes();
+        contextHolder.get().push(new ContentCacheParameters(requestAttributes));
+    }
+
+    static class ContentCacheParameters extends grails.plugin.cache.web.ContentCacheParameters {
+
+        ContentCacheParameters(GrailsWebRequest request) {
+            super(request)
+        }
+
+        @Override
+        protected void initController() {
+            controllerClass = (GrailsControllerClass) Holders.findApplication().getArtefactByLogicalPropertyName("Controller", controllerName)
+        }
     }
 }

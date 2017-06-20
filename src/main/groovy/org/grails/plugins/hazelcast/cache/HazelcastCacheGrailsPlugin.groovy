@@ -85,12 +85,14 @@ Hazelcast implementation of the Grails Cache plugin
                     bean.initMethod = 'loadConfig'
                     hazelcastInstance = instance
                 }
-                grailsCacheFilter(HazelcastPageFragmentCacheFilter) {
-                    cacheManager = ref('grailsCacheManager')
-                    cacheOperationSource = ref('cacheOperationSource')
-                    keyGenerator = ref('webCacheKeyGenerator')
-                    expressionEvaluator = ref('webExpressionEvaluator')
-                }
+
+                // does not work!
+//                grailsCacheFilter(HazelcastPageFragmentCacheFilter) {
+//                    cacheManager = ref('grailsCacheManager')
+//                    cacheOperationSource = ref('cacheOperationSource')
+//                    keyGenerator = ref('webCacheKeyGenerator')
+//                    expressionEvaluator = ref('webExpressionEvaluator')
+//                }
                 log.info "Hazelcast-Cache config loaded"
             } else {
                 log.warn "Hazelcast instance with name ${cacheConfig.hazelcastInstance} not found!"
