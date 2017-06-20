@@ -14,8 +14,6 @@ import java.util.concurrent.Callable
 @CompileStatic
 class GrailsHazelcastCache extends HazelcastCache implements GrailsCache {
 
-	Set<Class> excludes = [MetaClass] as Set<Class>
-
 	@Override
 	Collection<Object> getAllKeys() {
 		return cache.keySet()
@@ -49,14 +47,4 @@ class GrailsHazelcastCache extends HazelcastCache implements GrailsCache {
 		return value
 	}
 
-	@Override
-	void put(Object key, Object value) {
-		if (!excludes.any {it.isInstance(value)}) {
-			if (log.isTraceEnabled()) log.trace "put key: ${key?.toString()} and value ${value?.toString()}"
-			super.put(key, value)
-			return
-		}
-		log.warn "cannot put key: ${key?.toString()} and value ${value?.toString()}: not serializable"
-
-	}
 }
