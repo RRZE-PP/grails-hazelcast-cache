@@ -26,30 +26,51 @@ class HzCacheKeyGenerator implements KeyGenerator {
         Class objClass = AopProxyUtils.ultimateTargetClass(target)
         int targetObjectHashCode
 
-        def hasHashCodeOverridden = hashCodeMap.get(objClass)
-        if (hasHashCodeOverridden ==null){
-            def hashCodeMethod = ClassUtils.getMethod(Object, 'hashCode')
-            if(ClassUtils.getMostSpecificMethod(hashCodeMethod, objClass) == Object) {
-                log.warn "${objClass} or its super classes does not override the hashCode() method! " +
-                           "Please make sure the class has a proper hashCode() implementation " +
-                           "otherwise caching may not work properly!"
-                hasHashCodeOverridden = false
-            }else {
-                hasHashCodeOverridden = true
-            }
-            hashCodeMap.put(objClass, hasHashCodeOverridden)
-        }
+//        def hasHashCodeOverridden = hashCodeMap.get(objClass)
+//        if (hasHashCodeOverridden ==null){
+//            def hashCodeMethod = ClassUtils.getMethod(Object, 'hashCode')
+//            if(ClassUtils.getMostSpecificMethod(hashCodeMethod, objClass) == Object) {
+//                log.warn "${objClass} or its super classes does not override the hashCode() method! " +
+//                           "Please make sure the class has a proper hashCode() implementation " +
+//                           "otherwise caching may not work properly!"
+//                hasHashCodeOverridden = false
+//            }else {
+//                hasHashCodeOverridden = true
+//            }
+//            hashCodeMap.put(objClass, hasHashCodeOverridden)
+//        }
 
-        if(hasHashCodeOverridden || allowLocalCache) {
+        if(implementsHashCode(objClass) || allowLocalCache) {
             targetObjectHashCode = target.hashCode()
         } else {
             //TODO
             targetObjectHashCode = objClass.toString().intern().hashCode()*17// HashCodeBuilder.reflectionHashCode(target)
         }
 
+        // checks all params for proper hashCode implementation
+        params?.each {
+            implementsHashCode(it.getClass())
+        }
+
         new HzCacheKey(objClass.getName().intern(),
-                method.toString().intern(),targetObjectHashCode, SimpleKeyGenerator.generateKey(params))
+                method.toString().intern(),targetObjectHashCode, SimpleKeyGenerator.genergrateKey(params))
     }
 
+
+    protected boolean implementsHashCode(Class aClass){
+        def isImplemented = hashCodeMap.get(aClass)
+        if (isImplemented == null) {
+            def hashCodeMethod = ClassUtils.getMethod(Object, 'hashCode')
+            if (ClassUtils.getMostSpecificMethod(hashCodeMethod, aClass) == Object) {
+                log.warn "${aClass} or its super classes does not override the hashCode() method! " +
+                        "Please make sure the class has a proper hashCode() implementation " +
+                        "otherwise caching may not work properly!"
+                hashCodeMap.put(aClass, false)
+            } else {
+                hashCodeMap.put(aClass, false)
+            }
+        }
+        isImplemented
+    }
 
 }

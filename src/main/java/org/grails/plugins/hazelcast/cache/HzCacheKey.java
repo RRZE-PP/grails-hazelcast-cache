@@ -3,6 +3,8 @@ package org.grails.plugins.hazelcast.cache;
 import groovy.transform.ToString;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
 
@@ -11,12 +13,14 @@ import java.io.Serializable;
  */
 public class HzCacheKey implements Serializable{
 
+    private static final Logger logger = LoggerFactory.getLogger(HzCacheKey.class);
+
     private static final long serialVersionUID = 6111018785563168739L;
 
     private final String targetClassName;
     private final String targetMethodName;
     private final int targetObjectHashCode;
-    private final Object simpleKey;
+    private final int simpleKey;
 
 
     public HzCacheKey(String targetClassName, String targetMethodName,
@@ -24,11 +28,12 @@ public class HzCacheKey implements Serializable{
         this.targetClassName = targetClassName;
         this.targetMethodName = targetMethodName;
         this.targetObjectHashCode = targetObjectHashCode;
-        this.simpleKey = simpleKey;
+        this.simpleKey = simpleKey.hashCode();
     }
 
     @Override
     public int hashCode() {
+        logger.warn("hashCode");
         return new HashCodeBuilder(11, 17)
                 .append(targetClassName)
                 .append(targetMethodName)
@@ -64,10 +69,10 @@ public class HzCacheKey implements Serializable{
         StringBuilder sb = new StringBuilder();
 
         sb.append(targetMethodName);
-        sb.append("#");
-        sb.append(HzCacheKey.class.getSimpleName());
-        sb.append("@");
-        sb.append(Integer.toHexString(hashCode()));
+        sb.append("#Target@");
+        sb.append(Integer.toHexString(targetObjectHashCode));
+        sb.append("#Params@");
+        sb.append(Integer.toHexString(simpleKey));
         return sb.toString();
     }
 }
