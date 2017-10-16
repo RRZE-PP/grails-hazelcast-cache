@@ -53,7 +53,7 @@ class HzCacheKeyGenerator implements KeyGenerator {
         }
 
         new HzCacheKey(objClass.getName().intern(),
-                method.toString().intern(),targetObjectHashCode, SimpleKeyGenerator.genergrateKey(params))
+                method.toString().intern(),targetObjectHashCode, SimpleKeyGenerator.generateKey(params))
     }
 
 
