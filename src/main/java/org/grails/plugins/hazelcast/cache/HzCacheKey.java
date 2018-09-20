@@ -1,6 +1,5 @@
 package org.grails.plugins.hazelcast.cache;
 
-import groovy.transform.ToString;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 

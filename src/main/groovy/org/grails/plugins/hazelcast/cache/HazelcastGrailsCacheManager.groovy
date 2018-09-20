@@ -1,9 +1,13 @@
 package org.grails.plugins.hazelcast.cache
 
+
+import com.hazelcast.config.MapConfig
+import com.hazelcast.config.NearCacheConfig
 import com.hazelcast.core.IMap
 import com.hazelcast.spring.cache.HazelcastCacheManager
-import grails.plugin.cache.GrailsCacheManager
 import groovy.util.logging.Slf4j
+import org.grails.plugin.cache.GrailsCacheManager
+import org.grails.plugins.hazelcast.cache.HazelcastCacheConfiguration.HzCacheConfig
 import org.springframework.cache.Cache
 
 import java.util.concurrent.ConcurrentHashMap
@@ -24,16 +28,17 @@ class HazelcastGrailsCacheManager extends HazelcastCacheManager implements Grail
 
     @Override
     boolean destroyCache(String name) {
-//        if(log.traceEnabled)
-//            log.trace "Destroying cache with name $name not supported!"
         getCache(name).getCache().destroy()
         return true
     }
 
     @Override
-    GrailsHazelcastCache getCache(String name) {
+    GrailsHazelcastCache getCache(String name, MapConfig config = null) {
         Cache cache = caches.get(name)
         if (cache == null) {
+            if (config){
+                hazelcastInstance.getConfig().addMapConfig(config)
+            }
             IMap map = hazelcastInstance.getMap(name)
             cache = createGrailsHazelcastCache(map)
             Cache currentCache = caches.putIfAbsent(name, cache)
@@ -47,4 +52,27 @@ class HazelcastGrailsCacheManager extends HazelcastCacheManager implements Grail
     GrailsHazelcastCache createGrailsHazelcastCache(IMap map){
         new GrailsHazelcastCache(map)
     }
+
+    void setConfiguration(HazelcastCacheConfiguration configuration) {
+        configuration.caches.each { String key, HzCacheConfig value ->
+            getCache(key, convert(value))
+        }
+    }
+
+
+    MapConfig convert(HzCacheConfig config){
+        if (config.name){
+            new MapConfig(config.name)
+                    .setEvictionPolicy(config.evictionPolicy)
+                    .setTimeToLiveSeconds(config.timeToLiveSeconds)
+                    .setMaxIdleSeconds(config.maxIdleSeconds)
+                    .setNearCacheConfig(config.nearCacheConfig?new NearCacheConfig()
+                        .setName(config.nearCacheConfig.name)
+                        .setEvictionPolicy(config.nearCacheConfig.evictionPolicy)
+                        .setTimeToLiveSeconds(config.nearCacheConfig.timeToLiveSeconds)
+                        .setMaxIdleSeconds(config.nearCacheConfig.maxIdleSeconds):null
+            )
+        }
+    }
+
 }

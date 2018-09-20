@@ -42,9 +42,16 @@ Hazelcast implementation of the Grails Cache plugin
     def issueManagement = [ system: "GITHUB", url: "https://github.com/RRZE-PP/grails-hazelcast-cache/issues" ]
     // Online location of the plugin's browseable source code.
     def scm = [ url: "https://github.com/RRZE-PP/grails-hazelcast-cache" ]
+    private boolean isCachingEnabled() {
+        config.getProperty('grails.cache.enabled', Boolean, true)
+    }
 
     Closure doWithSpring() { {->
             // TODO Implement runtime spring config (optional)
+        if (!cachingEnabled) {
+            log.warn 'Cache plugin is disabled'
+            return
+        }
 
 //        def  hzConfig = grailsApplication.config.hazelcast
 //        if (hzConfig) {
@@ -73,26 +80,19 @@ Hazelcast implementation of the Grails Cache plugin
             log.info "load hazelcast instance"
             if (instance) {
 
-                cacheBeanPostProcessor(CacheBeanPostProcessor)
-
                 hzCacheKeyGenerator(HzCacheKeyGenerator)
 
                 grailsCacheManager(HazelcastGrailsCacheManager) {
                     hazelcastInstance = instance
                 }
 
-                grailsCacheConfigLoader(HzCacheConfigLoader) { bean ->
-                    bean.initMethod = 'loadConfig'
-                    hazelcastInstance = instance
-                }
+                grailsCacheConfiguration(HazelcastCacheConfiguration)
 
-                // does not work!
-//                grailsCacheFilter(HazelcastPageFragmentCacheFilter) {
-//                    cacheManager = ref('grailsCacheManager')
-//                    cacheOperationSource = ref('cacheOperationSource')
-//                    keyGenerator = ref('webCacheKeyGenerator')
-//                    expressionEvaluator = ref('webExpressionEvaluator')
+//                grailsCacheConfigLoader(HzCacheConfigLoader) { bean ->
+//                    bean.initMethod = 'loadConfig'
+//                    hazelcastInstance = instance
 //                }
+
                 log.info "Hazelcast-Cache config loaded"
             } else {
                 log.warn "Hazelcast instance with name ${cacheConfig.hazelcastInstance} not found!"
