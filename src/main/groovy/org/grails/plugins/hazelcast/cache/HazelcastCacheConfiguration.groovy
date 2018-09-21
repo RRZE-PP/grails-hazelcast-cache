@@ -10,7 +10,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties
 class HazelcastCacheConfiguration extends CachePluginConfiguration{
 
     String hazelcastInstance = 'hazelcast'
-    Map<String, HzCacheConfig> caches = [:]
+    Map<String, Map> caches = [:]
 
     class HzCacheConfig extends CachePluginConfiguration.CacheConfig {
         String name

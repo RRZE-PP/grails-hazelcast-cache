@@ -54,13 +54,13 @@ class HazelcastGrailsCacheManager extends HazelcastCacheManager implements Grail
     }
 
     void setConfiguration(HazelcastCacheConfiguration configuration) {
-        configuration.caches.each { String key, HzCacheConfig value ->
-            getCache(key, convert(value))
+        configuration.caches.each { String key, Map value ->
+            hazelcastInstance.getConfig().addMapConfig(convert(value))
         }
     }
 
 
-    MapConfig convert(HzCacheConfig config){
+    MapConfig convert(Map config){
         if (config.name){
             new MapConfig(config.name)
                     .setEvictionPolicy(config.evictionPolicy)

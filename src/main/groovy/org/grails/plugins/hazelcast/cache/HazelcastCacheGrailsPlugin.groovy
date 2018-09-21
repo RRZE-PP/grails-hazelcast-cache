@@ -82,11 +82,13 @@ Hazelcast implementation of the Grails Cache plugin
 
                 hzCacheKeyGenerator(HzCacheKeyGenerator)
 
+                grailsCacheConfiguration(HazelcastCacheConfiguration)
+
+
                 grailsCacheManager(HazelcastGrailsCacheManager) {
                     hazelcastInstance = instance
+                    configuration = ref('grailsCacheConfiguration')
                 }
-
-                grailsCacheConfiguration(HazelcastCacheConfiguration)
 
 //                grailsCacheConfigLoader(HzCacheConfigLoader) { bean ->
 //                    bean.initMethod = 'loadConfig'
